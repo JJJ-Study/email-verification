@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * {class name}.
+ * 검증 컨트롤러 클래스
  *
  * @author 정승조
  * @version 2024. 12. 16.
@@ -22,17 +22,24 @@ public class VerificationController {
     private final VerificationService verificationService;
 
     @PostMapping("/send")
-    public ResponseEntity<Void> sendMail(String email) {
-        verificationService.sendMail(email);
-
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> sendMail(@RequestParam String email) {
+        try {
+            verificationService.sendMail(email);
+            return ResponseEntity.ok("인증 코드가 전송되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<Void> verify(@RequestParam String code) {
-        verificationService.verify(code);
-
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> verify(@RequestParam String email,
+                                         @RequestParam String code) {
+        try {
+            verificationService.verify(email, code);
+            return ResponseEntity.ok("인증 성공!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }
